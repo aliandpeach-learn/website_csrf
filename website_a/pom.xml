@@ -30,7 +30,6 @@
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
-                <targetPath>/</targetPath>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -38,7 +37,6 @@
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
-                <targetPath>/</targetPath>
             </resource>
         </resources>
         <plugins>
