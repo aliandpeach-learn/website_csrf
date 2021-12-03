@@ -1,5 +1,8 @@
 package com.yk.servlet;
 
+import cn.hutool.core.net.multipart.MultipartFormData;
+import cn.hutool.core.net.multipart.UploadFile;
+import cn.hutool.extra.servlet.ServletUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * 描述
@@ -46,11 +50,11 @@ public class UploadServlet extends HttpServlet
     }
 
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp)
+    protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
         logger.info("UploadServlet#service");
-        InputStream input = req.getInputStream();
+        InputStream input = request.getInputStream();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8);
@@ -63,9 +67,17 @@ public class UploadServlet extends HttpServlet
 
         try
         {
+            input.reset();
+            boolean multipart = ServletUtil.isMultipart(request);
+            if (multipart)
+            {
+                MultipartFormData multipartFormData = ServletUtil.getMultipart(request);
+                Map<String, UploadFile[]> fileMap = multipartFormData.getFileMap();
+            }
+
             // 获取getParts会报 '由于没有提供multi-part配置,无法处理parts'
-            // 这里也能看出来 getParts只是servlet提供的接口，具体实现还需要相应的第三方包 例如spring-boot 中的embed-tomcat就是通过修改tomcat源码直接实现了该接口
-            Collection<Part> parts = req.getParts();
+            // 可知, getParts只是servlet提供的接口，具体实现还需要相应的第三方包 例如spring-boot 中的embed-tomcat就是通过修改tomcat源码直接实现了该接口
+            Collection<Part> parts = request.getParts();
         }
         catch (Throwable e)
         {
