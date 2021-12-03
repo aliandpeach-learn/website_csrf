@@ -2,8 +2,10 @@ package com.yk.servlet;
 
 import java.math.BigInteger;
 
-public class Main {
-    public static void main(String[] args) {
+public class Main
+{
+    public static void main(String[] args)
+    {
         System.out.println((int) '中');
         System.out.println('中');
 
@@ -55,7 +57,8 @@ public class Main {
      * from     原数的进制
      * to       要转换成的进制
      */
-    private static String change(String number, int from, int to) {
+    private static String change(String number, int from, int to)
+    {
         return new BigInteger(number, from).toString(to);
     }
 }

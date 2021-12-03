@@ -22,7 +22,7 @@
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="druid_conn"
                                  fileName="${LOG_HOME}/logs/druid_conn.log"
-                                 filePattern="${LOG_HOME}/logs/druid_conn.log.%d{yyyy-MM-dd}.gz">
+                                 filePattern="${LOG_HOME}/logs/druid_conn.log.%d{yyyy-MM-dd}-%i.gz">
             <PatternLayout
                     pattern="%d %-5p (%F:%L) - %m%n"/>
             <Policies>
@@ -33,7 +33,7 @@
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="filter"
                                  fileName="${LOG_HOME}/logs/filter.log"
-                                 filePattern="${LOG_HOME}/logs/filter.log.%d{yyyy-MM-dd}.gz">
+                                 filePattern="${LOG_HOME}/logs/filter.log.%d{yyyy-MM-dd}-%i.gz">
             <PatternLayout
                     pattern="%d %-5p (%F:%L) - %m%n"/>
             <Policies>

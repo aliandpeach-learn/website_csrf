@@ -12,7 +12,7 @@
     <title>Title</title>
 </head>
 <body>
-<form name="add" action="127.0.0.1/65532/a/add" method="post" enctype="application/x-www-form-urlencoded">
+<form name="add" action="127.0.0.1:65532/a/add" method="post" enctype="application/x-www-form-urlencoded">
     something : <input name="add" value="" type="text"/>
     <input type="submit" value="添加"/>
 </form>

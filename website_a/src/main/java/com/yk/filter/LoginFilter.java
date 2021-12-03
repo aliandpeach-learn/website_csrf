@@ -5,7 +5,12 @@ import com.yk.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,67 +18,72 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
-public class LoginFilter implements Filter {
+public class LoginFilter implements Filter
+{
 
     private Logger logger = LoggerFactory.getLogger("filter");
 
-    private static List<String> actions = new ArrayList<>();
+    private static List<String> excepts = new ArrayList<>();
 
     private static List<String> resources = new ArrayList<>();
 
-    static {
-        resources.add(".jsp");
+    static
+    {
         resources.add(".css");
         resources.add(".jpeg");
         resources.add(".png");
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        if (null != filterConfig && null != filterConfig.getInitParameter("validate")) {
-            String v = filterConfig.getInitParameter("validate");
-            actions.addAll(Arrays.asList(v.split(";")));
+    public void init(FilterConfig filterConfig) throws ServletException
+    {
+        if (null != filterConfig && null != filterConfig.getInitParameter("excepts"))
+        {
+            String v = filterConfig.getInitParameter("excepts");
+            excepts.addAll(Arrays.asList(v.split(";")));
         }
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        if (null == req || null == resp) {
+    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException
+    {
+        if (null == req || null == resp)
+        {
             return;
         }
-        if (!(req instanceof HttpServletRequest) || !(resp instanceof HttpServletResponse)) {
+        if (!(req instanceof HttpServletRequest) || !(resp instanceof HttpServletResponse))
+        {
             return;
         }
         HttpServletResponse response = (HttpServletResponse) resp;
         HttpServletRequest request = (HttpServletRequest) req;
         HttpSession session = request.getSession();
-        if (session == null) {
+        if (session == null)
+        {
             logger.error("session is null!");
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
-        String url = request.getRequestURI();
-        StringBuffer urlb = request.getRequestURL();
-        if (validate(url)) {
+        String uri = request.getRequestURI();
+        StringBuffer urlString = request.getRequestURL();
+        if (validate(uri)) // 例外就放行
+        {
             chain.doFilter(request, response);
             return;
         }
 
         Object u = session.getAttribute("user");
-        if (null == u) {
+        if (!(u instanceof User))
+        {
             logger.error("u is null!");
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
 
         User user = (User) u;
-        if (null == user || StringUtils.isEmpty(user.getName())) {
+        if (StringUtils.isEmpty(user.getName()))
+        {
             logger.error("user is null!");
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
@@ -83,18 +93,24 @@ public class LoginFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
+    public void destroy()
+    {
 
     }
 
-    private boolean validate(String url) {
-        for (String action : actions) {
-            if (url.endsWith(action)) {
+    private boolean validate(String url)
+    {
+        for (String action : excepts)
+        {
+            if (url.endsWith(action))
+            {
                 return true;
             }
         }
-        for (String action : resources) {
-            if (url.endsWith(action)) {
+        for (String action : resources)
+        {
+            if (url.endsWith(action))
+            {
                 return true;
             }
         }

@@ -12,18 +12,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DruidConnection {
+public class DruidConnection
+{
     private static Logger connLogger = LoggerFactory.getLogger("druid_conn");
     private static Properties properties;
 
     private static DruidDataSource druidDataSource;
 
-    static {
+    static
+    {
         properties = new Properties();
-        try {
+        try
+        {
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("druid.properties"));
 
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             connLogger.error("load Properties IOException", e);
         }
     }
@@ -33,15 +38,18 @@ public class DruidConnection {
      *
      * @return JDBCDruid实例
      */
-    public static DruidConnection getInstance() {
+    public static DruidConnection getInstance()
+    {
         return DruidConnectionHolder.INSTANCE;
     }
 
-    public DruidDataSource getDuridDatasource() {
+    public DruidDataSource getDuridDatasource()
+    {
         return druidDataSource;
     }
 
-    private DruidConnection() {
+    private DruidConnection()
+    {
         druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(properties.getProperty("jdbc.driverClassName"));
         druidDataSource.setUrl(properties.getProperty("jdbc.url"));
@@ -55,50 +63,71 @@ public class DruidConnection {
         druidDataSource.setValidationQuery("SELECT 1");
     }
 
-    private static class DruidConnectionHolder {
+    private static class DruidConnectionHolder
+    {
         public static DruidConnection INSTANCE = new DruidConnection();
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         DataSource dataSource = DruidConnection.getInstance().getDuridDatasource();
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        try {
+        try
+        {
             conn = dataSource.getConnection();
             ps = conn.prepareStatement("select * from download_scan");
             rs = ps.executeQuery();
-            while (rs.next()) {
+            while (rs.next())
+            {
                 long pkid = rs.getLong("pkid");
                 String url = rs.getString("url");
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             connLogger.error("SQLException", e);
-        } finally {
+        }
+        finally
+        {
             close(conn, ps, rs);
         }
     }
 
-    public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
-        try {
-            if (null != rs) {
+    public static void close(Connection conn, PreparedStatement ps, ResultSet rs)
+    {
+        try
+        {
+            if (null != rs)
+            {
                 rs.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             connLogger.error("close rs error", e);
         }
-        try {
-            if (null != ps) {
+        try
+        {
+            if (null != ps)
+            {
                 ps.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             connLogger.error("close ps error", e);
         }
-        try {
-            if (null != conn) {
+        try
+        {
+            if (null != conn)
+            {
                 conn.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             connLogger.error("close conn error", e);
         }
     }
